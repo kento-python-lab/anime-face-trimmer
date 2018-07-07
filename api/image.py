@@ -1,7 +1,8 @@
-from PIL import Image
-import cv2
-import requests
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 
+import cv2
+from PIL import Image
 from .util import get_suffix
 
 
@@ -9,7 +10,7 @@ class InvalidImageFormatError(BaseException):
     pass
 
 
-def get_faces(img_path, cascade_file='lbpcascade_animeface.xml'):
+def get_faces(img_path, cascade_file):
     cascade = cv2.CascadeClassifier(cascade_file)
     image = cv2.imread(img_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -34,15 +35,3 @@ def crop_face(image_path, face, min_size=(120, 120)):
         raise InvalidImageFormatError('サイズが規定値以下')
 
     return cropped
-
-
-def download_image(link):
-    ret = requests.get(link, allow_redirects=False)
-
-    suffix = get_suffix(link)
-    if not suffix:
-        raise InvalidImageFormatError('不正なファイルです ( 処理が面倒くさいから省いてるだけ )')
-
-    filename = f'images/tmp/tmp{suffix}'
-    open(filename, "wb").write(ret.content)
-    return filename
